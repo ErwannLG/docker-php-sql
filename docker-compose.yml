@@ -1,7 +1,7 @@
 services:
     php:
         image: php:8.3-apache
-        container_name: crud_php8_3
+        container_name: monprojet_php8_3
         ports:
             - "8000:80" # on définit le port pour accéder à l'application sur la première valeur (localhost:8000 si on a 8000:80)
         volumes:
@@ -11,7 +11,7 @@ services:
             dockerfile: Dockerfile
     db:
         image: mysql:8.0
-        container_name: crud_mysql8_0
+        container_name: monprojet_mysql8_0
         command: --default-authentication-plugin=mysql_native_password
         environment:
             MYSQL_ROOT_PASSWORD: root
@@ -24,7 +24,7 @@ services:
             - "3306:3306"
     phpma:
         image: phpmyadmin/phpmyadmin
-        container_name: projet_phpmyadmin # nom du container phpmyadmin pour le retrouver plus facilement
+        container_name: monprojet_phpmyadmin # nom du container phpmyadmin pour le retrouver plus facilement
         environment:
             PMA_ARBITRARY: 1
             PMA_HOST: db
