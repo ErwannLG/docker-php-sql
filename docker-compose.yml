@@ -1,35 +1,41 @@
 services:
-    php:
-        image: php:8.3-apache
-        container_name: monprojet_php8_3
-        ports:
-            - "8000:80" # on définit le port pour accéder à l'application sur la première valeur (localhost:8000 si on a 8000:80)
-        volumes:
-            - ./src:/var/www/html # on monte le dossier courant dans le dossier /var/www/html du container
-        build:
-            context: .
-            dockerfile: Dockerfile
-    db:
-        image: mysql:8.0
-        container_name: monprojet_mysql8_0
-        command: --default-authentication-plugin=mysql_native_password
-        environment:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: projet # nom de la base de données
-            MYSQL_USER: test
-            MYSQL_PASSWORD: test
-        volumes:
-            - "./data:/docker-entrypoint-initdb.d" # création de la table et insertion des données à partir du fichier .sql situé dans le dossier data
-        ports:
-            - "3306:3306"
-    phpma:
-        image: phpmyadmin/phpmyadmin
-        container_name: monprojet_phpmyadmin # nom du container phpmyadmin pour le retrouver plus facilement
-        environment:
-            PMA_ARBITRARY: 1
-            PMA_HOST: db
-            PMA_USER: root
-            PMA_PASSWORD: root
-            UPLOAD_LIMIT: 20M
-        ports:
-            - "8080:80" # on définit le port pour accéder à phpmyadmin (localhost:8080)
+  # Service PHP avec Apache
+  php:
+    image: php:8.3-apache
+    container_name: monprojet_php8_3
+    ports:
+      - '8000:80' # Application accessible sur http://localhost:8000
+    volumes:
+      - ./src:/var/www/html # Synchronisation du code PHP
+    build:
+      context: .
+      dockerfile: Dockerfile # Configuration PHP personnalisée (extensions)
+
+  # Service MySQL
+  db:
+    image: mysql:8.0
+    container_name: monprojet_mysql8_0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: projet
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    volumes:
+      - './data:/docker-entrypoint-initdb.d' # Initialisation automatique via le fichier .sql situé dans le dossier ./data
+      - './mysql:/var/lib/mysql' # Persistance des données
+    ports:
+      - '3306:3306' # Port MySQL standard
+
+  # Interface PHPMyAdmin
+  phpma:
+    image: phpmyadmin/phpmyadmin
+    container_name: monprojet_phpmyadmin
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: db # Connexion au service MySQL
+      PMA_USER: root # Utilisateur MySQL
+      PMA_PASSWORD: root # Mot de passe MySQL
+      UPLOAD_LIMIT: 20M # Taille max des fichiers
+    ports:
+      - '8080:80' # Interface accessible sur http://localhost:8080
